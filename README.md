@@ -5,6 +5,7 @@ Create a VPC with Public subnet & Private subnet at Amazon Web Services AWS and 
 Requirements
 ------------
 - AWS account and credentials
+- AWS CLI and Boto
 
 ## Role Variables
 

@@ -14,5 +14,7 @@ galaxy_info:
   - cloud
   - cloud:ec2
   - networking
+  - vpc
+  - aws
 
 dependencies: []
