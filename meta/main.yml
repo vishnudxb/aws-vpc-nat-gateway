@@ -1,0 +1,18 @@
+galaxy_info:
+  author: Vishnu Nair
+  company: Vimpelcom
+  description: "Create a VPC with Public subnet & Private subnet at Amazon Web Services AWS and enable NAT gateway for Private Subnet"
+  min_ansible_version: 1.8
+  license: MIT
+  platforms:
+  - name: AWS
+    versions:
+    - all
+  categories:
+  - system
+  - development
+  - cloud
+  - cloud:ec2
+  - networking
+
+dependencies: []

@@ -1,0 +1,9 @@
+---
+# vars file for aws-vpc-nat-gateway
+
+region: required
+cidr: required
+public_subnet: required
+private_subnet: required
+public_subnet_az: required
+private_subnet_az: required

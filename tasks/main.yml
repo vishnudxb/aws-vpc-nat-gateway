@@ -1,0 +1,54 @@
+---
+# Creating a VPC with Public and Private subnet in a VPC and setup NAT gateway for the private network. 
+- name: setup vpc
+  hosts: localhost
+  gather_facts: true
+  sudo_user: false
+  pre_tasks:
+    - include_vars: ../vars/main.yml
+  tasks:
+    - name: create VPC with public and private subnet
+      ec2_vpc:
+        state: present
+        cidr_block: '{{ cidr }}'
+        subnets:
+          - cidr: '{{ public_subnet }}'
+            az: '{{ public_subnet_az }}'
+            resource_tags: { "Subnet":"Public" }
+          - cidr: '{{ private_subnet }}'
+            az: '{{ private_subnet_az }}'
+            resource_tags: { "Subnet":"Private" }
+        internet_gateway: True
+        route_tables:
+          - subnets:
+              - '{{ public_subnet }}'
+            routes:
+              - dest: 0.0.0.0/0
+                gw: igw
+        region: '{{ region }}'
+      register: vpc
+
+
+- name: Copy the file to /tmp
+  template: src=create-nat-gw.sh dest=/tmp/create-nat-gw.sh mode=0755
+
+- name: Create NAT gateway by executing the script
+  shell: sh /tmp/create-nat-gw.sh
+
+- name: Change the route for VPC Private Subnet
+  hosts: localhost
+  gather_facts: true
+  sudo_user: false
+  pre_tasks:
+    - include_vars: ../vars/main.yml
+
+  tasks:
+    - name: Modify private subnet
+      ec2_vpc_route_table:
+        vpc_id: '{{ vpc.vpc_id }}'
+        region: '{{ region }}'
+        subnets:
+          - "{{ lookup('file', '/tmp/private-subnet') }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ lookup('file', '/tmp/nat-gateway') }}"
